@@ -1,19 +1,19 @@
 /**
  * Copyright 2017 Sean Kavanagh - sean.p.kavanagh6@gmail.com
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ec2box.manage.util;
+package io.bastillion.manage.util;
 
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -23,7 +23,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 
 public class EncryptionUtil {
-    private static final byte[] key = new byte[]{'t', '3', '2', 'm', 'p', 'd', 'M', 'O', 'i', '8', 'x', 'z', 'a', 'P', 'o', 'd'};
+    private static final byte[] key = KeyStoreUtil.getSecretBytes("EC2BOX-ENCRYPTION_KEY");
     public static final String CRYPT_ALGORITHM = "AES";
     public static final String HASH_ALGORITHM = "SHA-256";
 

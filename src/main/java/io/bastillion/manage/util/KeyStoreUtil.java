@@ -1,20 +1,22 @@
 /**
  * Copyright 2017 Sean Kavanagh - sean.p.kavanagh6@gmail.com
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ec2box.manage.util;
+package io.bastillion.manage.util;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -36,7 +38,7 @@ public class KeyStoreUtil {
         byte[] value = null;
 
         try {
-            SecretKeyEntry entry = (SecretKeyEntry)keyStore.getEntry(alias, new PasswordProtection(KEYSTORE_PASS));
+            SecretKeyEntry entry = (SecretKeyEntry) keyStore.getEntry(alias, new PasswordProtection(KEYSTORE_PASS));
             value = entry.getSecretKey().getEncoded();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -49,7 +51,7 @@ public class KeyStoreUtil {
         String value = null;
 
         try {
-            SecretKeyEntry entry = (SecretKeyEntry)keyStore.getEntry(alias, new PasswordProtection(KEYSTORE_PASS));
+            SecretKeyEntry entry = (SecretKeyEntry) keyStore.getEntry(alias, new PasswordProtection(KEYSTORE_PASS));
             value = new String(entry.getSecretKey().getEncoded());
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -65,8 +67,8 @@ public class KeyStoreUtil {
             SecretKeySpec secretKey = new SecretKeySpec(secret, 0, secret.length, "AES");
             SecretKeyEntry secretKeyEntry = new SecretKeyEntry(secretKey);
             keyStore.setEntry(alias, secretKeyEntry, protectionParameter);
-        } catch (Exception var5) {
-            var5.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
     }
@@ -78,20 +80,33 @@ public class KeyStoreUtil {
     public static void initializeKeyStore() {
         try {
             keyStore = KeyStore.getInstance("JCEKS");
-            keyStore.load((InputStream)null, KEYSTORE_PASS);
+            keyStore.load((InputStream) null, KEYSTORE_PASS);
             setSecret("EC2BOX-ENCRYPTION_KEY", key);
             FileOutputStream fos = new FileOutputStream(keyStoreFile);
             keyStore.store(fos, KEYSTORE_PASS);
             fos.close();
-        } catch (Exception var1) {
-            var1.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
     }
 
     static {
-        keyStoreFile = DBUtils.DB_PATH + "/../ec2box.jceks";
+        keyStoreFile = DBUtils.DB_PATH + "bastillion.jceks";
         KEYSTORE_PASS = new char[]{'G', '~', 'r', 'x', 'Z', 'E', 'w', 'f', 'a', '[', '!', 'f', 'Z', 'd', '*', 'L', '8', 'm', 'h', 'u', '#', 'j', '9', ':', '~', ';', 'U', '>', 'O', 'i', '8', 'r', 'C', '}', 'f', 't', '%', '[', 'H', 'h', 'M', '&', 'K', ':', 'l', '5', 'c', 'H', '6', 'r', 'A', 'E', '.', 'F', 'Y', 'W', '}', '{', '*', '8', 'd', 'E', 'C', 'A', '6', 'F', 'm', 'j', 'u', 'A', 'Q', '%', '{', '/', '@', 'm', '&', '5', 'S', 'q', '4', 'Q', '+', 'Y', '|', 'X', 'W', 'z', '8', '<', 'j', 'd', 'a', '}', '`', '0', 'N', 'B', '3', 'i', 'v', '5', 'U', ' ', '2', 'd', 'd', '(', '&', 'J', '_', '9', 'o', '(', '2', 'I', '`', ';', '>', '#', '$', 'X', 'j', '&', '&', '%', '>', '#', '7', 'q', '>', ')', 'L', 'A', 'v', 'h', 'j', 'i', '8', '~', ')', 'a', '~', 'W', '/', 'l', 'H', 'L', 'R', '+', '\\', 'i', 'R', '_', '+', 'y', 's', '0', 'n', '\'', '=', '{', 'B', ':', 'l', '1', '%', '^', 'd', 'n', 'H', 'X', 'B', '$', 'f', '"', '#', ')', '{', 'L', '/', 'q', '\'', 'O', '%', 's', 'M', 'Q', ']', 'D', 'v', ';', 'L', 'C', 'd', '?', 'D', 'l', 'h', 'd', 'i', 'N', '4', 'R', '>', 'O', ';', '$', '(', '4', '-', '0', '^', 'Y', ')', '5', 'V', 'M', '7', 'S', 'a', 'c', 'D', 'C', 'w', 'A', 'o', 'n', 's', 'r', '*', 'G', '[', 'l', 'h', '$', 'U', 's', '_', 'D', 'f', 'X', '~', '.', '7', 'B', 'A', 'E', '(', '#', ']', ':', '`', ',', 'k', 'y'};
         key = new byte[]{'t', '3', '2', 'm', 'p', 'd', 'M', 'O', 'i', '8', 'x', 'z', 'a', 'P', 'o', 'd'};
+        File f = new File(keyStoreFile);
+        if (f.isFile() && f.canRead()) {
+            try {
+                keyStore = KeyStore.getInstance("JCEKS");
+                FileInputStream keyStoreInputStream = new FileInputStream(f);
+                keyStore.load(keyStoreInputStream, KEYSTORE_PASS);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            initializeKeyStore();
+        }
+
     }
 }

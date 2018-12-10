@@ -1,1 +1,1 @@
-# EC2Box-upgrade
+# Bastillion for EC2 upgrade
